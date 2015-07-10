@@ -1,3 +1,4 @@
+require 'invincible_rails_server'
 require 'spec_helper'
 
 describe InvincibleRailsServer do
@@ -5,7 +6,7 @@ describe InvincibleRailsServer do
     expect(InvincibleRailsServer::VERSION).not_to be nil
   end
 
-  it 'does something useful' do
-    expect(false).to eq(true)
-  end
+  # xit 'does something useful' do
+  #   expect(false).to eq(true)
+  # end
 end
