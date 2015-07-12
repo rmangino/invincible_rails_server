@@ -1,4 +1,189 @@
 #!/usr/bin/env ruby
-require_relative "../lib/ blah blah"
+#require_relative "../lib/ blah blah"
 
-puts "It's alive!"
+# == Synopsis
+#   This is a sample description of the application.
+#   Blah blah blah.
+#
+# == Examples
+#   This command does blah blah blah.
+#     ruby_cl_skeleton foo.txt
+#
+#   Other examples:
+#     ruby_cl_skeleton -q bar.doc
+#     ruby_cl_skeleton --verbose foo.html
+#
+# == Usage
+#   ruby_cl_skeleton [options] source_file
+#
+#   For help use: ruby_cl_skeleton -h
+#
+# == Options
+#   -h, --help          Displays help message
+#   -v, --version       Display the version, then exit
+#   -q, --quiet         Output as little as possible, overrides verbose
+#   -V, --verbose       Verbose output
+#   TO DO - add additional options
+#
+# == Author
+#   YourName
+#
+# == Copyright
+#   Copyright (c) 2007 YourName. Licensed under the MIT License:
+#   http://www.opensource.org/licenses/mit-license.php
+
+
+# TO DO - replace all ruby_cl_skeleton with your app name
+# TO DO - replace all YourName with your actual name
+# TO DO - update Synopsis, Examples, etc
+# TO DO - change license if necessary
+
+# require 'optparse'
+# require 'ostruct'
+require 'colored'
+
+class App
+
+  attr_reader :options
+
+  def initialize(arguments)
+    @arguments = arguments
+    puts @arguments
+
+    # Set defaults
+    # @options = OpenStruct.new
+    # @options.verbose = false
+    # @options.quiet = false
+    # TO DO - add additional defaults
+  end
+
+  # # Parse options, check arguments, then process the command
+  def run
+
+    loop do
+      run_again = launch_rails_server()
+      if !run_again
+        break
+      end
+    end
+
+    # if parsed_options? && arguments_valid?
+
+    #   puts "Start at #{DateTime.now}\n\n" if @options.verbose
+
+    #   output_options if @options.verbose # [Optional]
+
+    #   process_arguments
+    #   process_command
+
+    #   puts "\nFinished at #{DateTime.now}" if @options.verbose
+
+    # else
+    #   output_usage
+    # end
+
+  end
+
+protected
+
+  def parsed_options?
+
+    # Specify options
+    opts = OptionParser.new
+    opts.on('-v', '--version')    { output_version ; exit 0 }
+    opts.on('-h', '--help')       { output_help }
+    opts.on('-V', '--verbose')    { @options.verbose = true }
+    opts.on('-q', '--quiet')      { @options.quiet = true }
+    # TO DO - add additional options
+
+    opts.parse!(@arguments) rescue return false
+
+    process_options
+    true
+  end
+
+  # Performs post-parse processing on options
+  def process_options
+    @options.verbose = false if @options.quiet
+  end
+
+  def output_options
+    puts "Options:\n"
+
+    @options.marshal_dump.each do |name, val|
+      puts "  #{name} = #{val}"
+    end
+  end
+
+  # True if required arguments were provided
+  def arguments_valid?
+    # TO DO - implement your real logic here
+    true if @arguments.length == 1
+  end
+
+  # Setup the arguments
+  def process_arguments
+    # TO DO - place in local vars, etc
+  end
+
+  def output_help
+    output_version
+    output_usage
+  end
+
+  def output_usage
+#TODO show usage
+    puts "FIXME: display usage info"
+    #RDoc::usage('usage') # gets usage from comments above
+  end
+
+  def output_version
+    puts "version #{InvincibleRailsServer::VERSION}"
+  end
+
+  def process_command
+    # TODO - do whatever this app does
+  end
+
+  def show_info_message
+    line_length = 80
+
+    puts ('='*line_length).yellow
+    puts " Launching 'rails server'"
+    puts "   ^C: automatically restart the server".blue
+    puts "   ^\\: shutdown server".red
+    puts ('='*line_length).yellow
+  end
+
+  def launch_rails_server
+    run_again = false
+
+    show_info_message
+
+    pid = spawn("rails server", pgroup: true)
+
+    [:INT, :QUIT].each do |signal|
+      Signal.trap(signal) do
+        #puts "!!!!!!!!!!! caught signal: #{signal}"
+
+        Process.kill('INT', pid)
+
+        run_again = signal == :INT
+      end
+    end
+
+    Process.wait(pid)
+
+    return run_again
+
+  end
+
+end
+
+
+# TO DO - Add your Modules, Classes, etc
+
+
+# Create and run the application
+app = App.new(ARGV)
+app.run
